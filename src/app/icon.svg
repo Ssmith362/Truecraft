@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Placeholder favicon: typeset monogram on brand navy. Replace with Matt's real mark. -->
+  <rect width="64" height="64" rx="8" fill="#11273a"/>
+  <text x="32" y="40" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="800" fill="#fcfaf5" letter-spacing="1">TC</text>
+  <rect x="14" y="48" width="36" height="3" rx="1.5" fill="#cfa84f"/>
+</svg>

@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+/*
+  TRUECRAFT DESIGN TOKENS
+
+  Navy carries structure (header bar, footer, final call to action).
+  Cream is the page. Gold is reserved for the primary action and for the
+  brushstroke motif. Forest green is the second voice: it marks the carpet
+  repair story and small interactive details.
+
+  gold-600 is the button colour: it is the lightest gold that still clears
+  WCAG AA (4.5:1) with white text. Lighter golds are for accents on navy only.
+*/
+@theme {
+  --color-navy-950: #0b1a28;
+  --color-navy-900: #11273a;
+  --color-navy-800: #193650;
+  --color-navy-700: #234a6b;
+  --color-navy-200: #b9c8d6;
+  --color-navy-100: #dfe7ee;
+
+  --color-cream-50: #fcfaf5;
+  --color-cream-100: #f6f1e6;
+  --color-cream-200: #ece3d0;
+  --color-cream-300: #dccfb4;
+
+  --color-gold-300: #e3c67f;
+  --color-gold-400: #cfa84f;
+  --color-gold-500: #b08a2e;
+  --color-gold-600: #8f6b1e;
+  --color-gold-700: #725518;
+
+  --color-forest-500: #3a6e58;
+  --color-forest-600: #2f5d4a;
+  --color-forest-700: #244a3b;
+  --color-forest-800: #1b3a2e;
+  --color-forest-900: #14291f;
+
+  --color-sage-100: #e9ede6;
+  --color-sage-200: #d6ddd2;
+
+  --color-ink: #14212c;
+  --color-ink-soft: #46535e;
+  --color-line: #d9d2c2;
+
+  --font-serif: var(--font-source-serif), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-caveat), "Segoe Script", cursive;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream-50);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* One consistent, clearly visible focus ring everywhere. */
+  :focus-visible {
+    outline: 3px solid var(--color-gold-500);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-gold-300);
+    color: var(--color-navy-950);
+  }
+}
+
+@layer components {
+  /*
+    THE RULER. TrueCraft's recurring motif: a tape-measure edge used wherever a
+    plain divider would otherwise go. Short ticks every 8px, a long tick every
+    40px. Inherits its colour from `color`, so it works on any background.
+  */
+  .ruler {
+    height: 10px;
+    background-image:
+      linear-gradient(90deg, currentColor 1px, transparent 1px),
+      linear-gradient(90deg, currentColor 1px, transparent 1px);
+    background-size:
+      40px 10px,
+      8px 5px;
+    background-repeat: repeat-x;
+    background-position:
+      left top,
+      left top;
+    opacity: 0.55;
+  }
+
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  /* Long-form copy inside service and info pages. */
+  .prose-tc p + p {
+    margin-top: 1.1em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
