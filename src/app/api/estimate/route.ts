@@ -88,6 +88,14 @@ export async function POST(request: Request) {
     return Response.json({ ok: true });
   }
 
+  // Time trap: catches instant bots. Low on purpose, since browser autofill is
+  // quick. Only judged when the page supplied a timestamp, so an old cached
+  // copy of the form is never turned away.
+  const startedAt = Number(clean(form.get("startedAt"), 20));
+  if (startedAt > 0 && Date.now() - startedAt < 2000) {
+    return Response.json({ ok: true });
+  }
+
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   if (throttled(ip)) {
     return Response.json({ error: "Too many requests. Please call instead." }, { status: 429 });

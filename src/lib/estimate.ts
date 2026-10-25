@@ -41,6 +41,9 @@ export type EstimateFields = {
 
 export type FieldErrors = Partial<Record<keyof EstimateFields | "photos", string>>;
 
+/** Nearly all form spam is a pitch with a link. A real visitor can just remove it. */
+const HAS_LINK = /(https?:\/\/|www\.)/i;
+
 export function validateFields(f: EstimateFields, allowedServices: string[]): FieldErrors {
   const errors: FieldErrors = {};
   const digits = f.phone.replace(/\D/g, "");
@@ -59,7 +62,10 @@ export function validateFields(f: EstimateFields, allowedServices: string[]): Fi
   if (!allowedServices.includes(f.service)) errors.service = "Please choose the closest match.";
   if (f.message.length < 10) {
     errors.message = "A sentence or two about the project helps Matt give you a useful answer.";
+  } else if (HAS_LINK.test(f.message)) {
+    errors.message = "Please leave web links out of the description.";
   }
+  if (!errors.name && HAS_LINK.test(f.name)) errors.name = "Please enter your name, not a web address.";
   return errors;
 }
 

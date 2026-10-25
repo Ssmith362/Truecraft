@@ -59,6 +59,12 @@ export function EstimateForm({ serviceOptions, phone, photosEnabled, submitLabel
   const [photos, setPhotos] = useState<File[]>([]);
   const [preparing, setPreparing] = useState(false);
 
+  // Stamped when the form mounts, for the server's time trap.
+  const startedAt = useRef("");
+  useEffect(() => {
+    startedAt.current = String(Date.now());
+  }, []);
+
   const allowed = [...serviceOptions.map((s) => s.label), OTHER_SERVICE];
 
   // Preselect the service when arriving from a service page (/contact?service=slug).
@@ -119,6 +125,8 @@ export function EstimateForm({ serviceOptions, phone, photosEnabled, submitLabel
     // The file input is not named, so photos are appended explicitly: these
     // are the downscaled copies, not the originals the visitor picked.
     photos.forEach((p) => data.append("photos", p, p.name));
+
+    data.append("startedAt", startedAt.current);
 
     setStatus("sending");
     try {
