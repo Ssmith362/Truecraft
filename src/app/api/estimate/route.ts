@@ -70,6 +70,11 @@ function throttled(ip: string) {
   return recent.length > MAX_PER_WINDOW;
 }
 
+/** Visible in the host's logs, so dropped submissions can be audited. Holds no personal details. */
+function logFiltered(reason: "honeypot" | "too-fast", elapsedMs?: number) {
+  console.warn("[spam-filtered]", JSON.stringify({ form: "true-craft-estimate", reason, elapsedMs }));
+}
+
 /** Lets you confirm from a browser whether delivery is wired up. No secrets. */
 export function GET() {
   return Response.json({ configured: Boolean(config()) });
@@ -84,15 +89,21 @@ export async function POST(request: Request) {
   }
 
   // Honeypot. Answer 200 so a bot cannot tell it was caught, but send nothing.
-  if (clean(form.get("company"), 200)) {
+  // The field has an unremarkable name on purpose: "company" and "website" get
+  // autofilled by browsers, which would silently drop a real inquiry.
+  if (clean(form.get("ref_code_x7"), 200)) {
+    logFiltered("honeypot");
     return Response.json({ ok: true });
   }
 
   // Time trap: catches instant bots. Low on purpose, since browser autofill is
-  // quick. Only judged when the page supplied a timestamp, so an old cached
-  // copy of the form is never turned away.
-  const startedAt = Number(clean(form.get("startedAt"), 20));
-  if (startedAt > 0 && Date.now() - startedAt < 2000) {
+  // quick. The form reports how long it was open, measured on the visitor's own
+  // device, so a wrong clock cannot make a real person look like a bot. Absent
+  // = not judged, so an old cached copy of the form is never turned away.
+  const elapsedRaw = clean(form.get("elapsedMs"), 20);
+  const elapsed = elapsedRaw === "" ? Number.NaN : Number(elapsedRaw);
+  if (elapsed >= 0 && elapsed < 2000) {
+    logFiltered("too-fast", elapsed);
     return Response.json({ ok: true });
   }
 

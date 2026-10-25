@@ -59,10 +59,11 @@ export function EstimateForm({ serviceOptions, phone, photosEnabled, submitLabel
   const [photos, setPhotos] = useState<File[]>([]);
   const [preparing, setPreparing] = useState(false);
 
-  // Stamped when the form mounts, for the server's time trap.
-  const startedAt = useRef("");
+  // Stamped when the form mounts, for the server's time trap. Elapsed time is
+  // measured here so a wrong device clock cannot matter.
+  const mountedAt = useRef(0);
   useEffect(() => {
-    startedAt.current = String(Date.now());
+    mountedAt.current = Date.now();
   }, []);
 
   const allowed = [...serviceOptions.map((s) => s.label), OTHER_SERVICE];
@@ -126,7 +127,7 @@ export function EstimateForm({ serviceOptions, phone, photosEnabled, submitLabel
     // are the downscaled copies, not the originals the visitor picked.
     photos.forEach((p) => data.append("photos", p, p.name));
 
-    data.append("startedAt", startedAt.current);
+    data.append("elapsedMs", String(Date.now() - mountedAt.current));
 
     setStatus("sending");
     try {
@@ -198,8 +199,8 @@ export function EstimateForm({ serviceOptions, phone, photosEnabled, submitLabel
       {/* Honeypot. Hidden from people and assistive tech; bots fill it in. */}
       <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
         <label>
-          Company
-          <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+          Leave this empty
+          <input type="text" name="ref_code_x7" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
 
